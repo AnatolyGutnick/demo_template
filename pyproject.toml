@@ -32,9 +32,6 @@ markers = [
     "ui: UI-level test",
     "e2e: combined API + UI flow",
     "unit: framework self-tests, no system under test needed",
-    "auth: category - authentication",
-    "items: category - secret items (types, formats, versions)",
-    "access: category - access roles and rules",
     "tc(id): link to a test case ID in docs/03-test-cases.md",
 ]
 

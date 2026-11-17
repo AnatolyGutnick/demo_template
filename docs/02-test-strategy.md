@@ -69,17 +69,19 @@ Every request to Akeyless goes through the same stages; each stage has its own v
 identity (auth method) -> token -> role rules -> item (type, format, version) -> delivery channel
 ```
 
-| Stage      | Variations                                                      | Test group (marker)                         | In this demo                 |
-|------------|-----------------------------------------------------------------|---------------------------------------------|------------------------------|
-| Identity   | access key, API key, JWT/OIDC, Kubernetes, AWS IAM, certificate | `auth` - `tests/api/test_auth.py`           | access key / API key         |
-| Role rules | read, list, update, delete, deny; folder, sibling, prefix       | `access` - `tests/api/test_access_rules.py` | decision table (8 rows)      |
-| Item       | text, multiline, JSON, unicode; versions                        | `items` - `tests/api/test_secret_items.py`  | 5 values + versions          |
-| Delivery   | REST, CLI, SDK, Gateway (cache), K8s injector, CI plugins       | -                                           | REST only (rest needs infra) |
+| Stage      | Variations                                                      | Test group (folder) | In this demo                 |
+|------------|-----------------------------------------------------------------|---------------------|------------------------------|
+| Identity   | access key, API key, JWT/OIDC, Kubernetes, AWS IAM, certificate | `tests/api/auth/`   | access key / API key         |
+| Role rules | read, list, update, delete, deny; folder, sibling, prefix       | `tests/api/access/` | decision table (8 rows)      |
+| Item       | text, multiline, JSON, unicode; versions                        | `tests/api/items/`  | 5 values + versions          |
+| Delivery   | REST, CLI, SDK, Gateway (cache), K8s injector, CI plugins       | -                   | REST only (rest needs infra) |
 
 Each group varies **one** stage and keeps the others at the default (one-at-a-time). Varying everything against
 everything would be ~1,500 combinations; for a real project a small pairwise set would cover the interactions.
 
-Run one group: `pytest -m access`. In code, one pipeline row is:
+Test groups are **folders**: `tests/<layer>/<category>/`. A hook in `tests/conftest.py` turns the folder into a
+marker and an Allure label (`api` -> `access`), so tests carry no category markers and a new category is just a
+new folder. Run one group: `pytest tests/api/access` or `pytest -m access`. In code, one pipeline row is:
 
 ```python
 flow.then(create_secret(folder="app")).then(limited_identity([(["read"], "{root}/app/*")])).run()

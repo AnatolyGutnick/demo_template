@@ -28,7 +28,11 @@ framework/
   config.py     settings from env vars
 tests/
   unit/         the flow orchestrator itself - runs without any system
-  api/          test groups by pipeline stage: auth, items, access (`pytest -m access`)
+  api/          one folder per pipeline stage (category):
+    auth/       identity -> token
+    items/      values, versions, delete
+    access/     role rules decision table
+                folder = marker + Allure suite, set by a hook (`pytest -m access`)
   ui/           user-visible behaviour
   e2e/          arrange via API -> act in UI -> verify via API
 ```

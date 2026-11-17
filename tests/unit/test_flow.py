@@ -5,7 +5,7 @@ import pytest
 
 from framework.flow import Flow, Step
 
-pytestmark = [pytest.mark.unit, allure.feature("Framework"), allure.story("Flow orchestrator")]
+pytestmark = [allure.feature("Framework"), allure.story("Flow orchestrator")]
 
 
 def _record(log: list[str], name: str, cleanup: bool = True, fail: bool = False) -> Step:

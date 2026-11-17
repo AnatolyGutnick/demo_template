@@ -17,7 +17,9 @@ API + UI test automation: Python, pytest, Playwright (sync), Page Object Model, 
 - `framework/api` - API clients (one per resource) on `BaseClient`
 - `framework/models` - pydantic response contracts
 - `framework/data` - test data factories (unique data per test)
-- `tests/api | ui | e2e` - tests per layer
+- `tests/api | ui | e2e` - tests per layer; `tests/<layer>/<category>/` - one folder per category.
+  Layer and category markers + Allure suites come from the folder (hook in `tests/conftest.py`) - do not add them by hand.
+- `framework/flow` - generic flow orchestrator; `framework/steps` - reusable steps per system
 - `docs/` - system review, strategy, test cases, bugs, AI log
 
 ## Rules

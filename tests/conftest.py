@@ -4,11 +4,13 @@ Layers:
 - api_request / *_client  -> API tests and API-based setup for UI tests
 - page objects            -> UI tests
 - Allure                  -> test case ID link + failure artifacts
+- Folders                 -> layer and category markers / Allure labels (no manual markers)
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterator
+from pathlib import Path
 
 import allure
 import pytest
@@ -62,9 +64,50 @@ def login_page(page: Page) -> ExampleLoginPage:
 # ---------- Allure ----------
 
 
+TESTS_DIR = Path(__file__).parent
+LAYERS = ("unit", "api", "ui", "e2e")
+
+
+def _categories() -> set[str]:
+    """Every folder under a layer is a category: tests/api/access -> "access"."""
+    return {
+        folder.name
+        for layer in LAYERS
+        if (TESTS_DIR / layer).is_dir()
+        for folder in (TESTS_DIR / layer).iterdir()
+        if folder.is_dir() and not folder.name.startswith(("_", "."))
+    }
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Register category markers from the folders, so a new folder needs no config change."""
+    for category in sorted(_categories()):
+        config.addinivalue_line("markers", f"{category}: category (folder tests/<layer>/{category})")
+
+
+def _layer_and_category(item: pytest.Item) -> tuple[str | None, str | None]:
+    parts = item.path.relative_to(TESTS_DIR).parts  # ("api", "access", "test_role_rules.py")
+    layer = parts[0] if parts[0] in LAYERS else None
+    category = parts[1] if layer and len(parts) > 2 else None
+    return layer, category
+
+
 def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
-    """Turn @pytest.mark.tc("TC-001") into an Allure label, so report <-> test-case table are linked."""
+    """Labels come from the folder and the tc marker - one rule here instead of in every file.
+
+    - folder layer    -> marker (`-m api`) + Allure parent suite
+    - folder category -> marker (`-m access`) + Allure suite
+    - @pytest.mark.tc -> Allure ID + tag, so report <-> test-case table are linked
+    """
     for item in items:
+        layer, category = _layer_and_category(item)
+        if layer:
+            item.add_marker(getattr(pytest.mark, layer))
+            item.add_marker(allure.parent_suite(layer))
+        if category:
+            item.add_marker(getattr(pytest.mark, category))
+            item.add_marker(allure.suite(category))
+
         marker = item.get_closest_marker("tc")
         if marker and marker.args:
             item.add_marker(allure.id(marker.args[0]))

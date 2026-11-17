@@ -1,4 +1,4 @@
-"""Category: access - the decision table from docs/03-test-cases.md.
+"""The access rules decision table from docs/03-test-cases.md.
 
 Pipeline per row: admin creates the secret -> new identity with only the row's rules ->
 that identity tries one action. One test, many variations.
@@ -9,7 +9,7 @@ import pytest
 
 from framework.steps.akeyless_api import create_secret, limited_identity
 
-pytestmark = [pytest.mark.api, pytest.mark.access, allure.feature("Access roles")]
+pytestmark = allure.feature("Access roles")
 
 ACTIONS = {
     "read": lambda client, secret: client.get_secret_value([secret.name]),
