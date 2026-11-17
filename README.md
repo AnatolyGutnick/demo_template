@@ -9,7 +9,8 @@ API + UI test automation template - Python, pytest, Playwright, Page Object Mode
 The test design is in `docs/`, the code follows it:
 
 1. [System review](docs/01-system-review.md) - what the system does, observed behaviour, open questions
-2. [Test strategy](docs/02-test-strategy.md) - risks, priorities, what is tested at API vs UI level
+2. [Test strategy](docs/02-test-strategy.md) - risks, priorities, what is tested at API vs UI level,
+   [framework design diagrams](docs/02-test-strategy.md#framework-design---chain-of-steps)
 3. [Test cases](docs/03-test-cases.md) - every case with technique, priority, layer; IDs link to the code and Allure
 4. [Bugs](docs/04-bugs.md) - defects found, with evidence
 5. [AI usage](docs/AI_USAGE.md) - how AI was used, what was kept, changed or dropped
