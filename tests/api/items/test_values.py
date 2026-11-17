@@ -25,11 +25,14 @@ VALUES = [
 @pytest.mark.tc("TC-API-003")
 @pytest.mark.parametrize("item", VALUES)
 def test_created_secret_value_is_returned_exactly(flow, item):
+    # Arrange: admin creates a secret with this row's value (text, multiline, JSON, unicode, spaces)
     flow.then(create_secret(**item)).run()
     secret = flow.ctx["secret"]
 
+    # Act: admin reads it back
     response = flow.ctx["admin"].get_secret_value([secret.name])
 
+    # Assert: the same value, character for character
     assert response.status == 200
     # assumption (01-system-review Q11): the response maps secret name -> value
     assert response.json()[secret.name] == secret.value

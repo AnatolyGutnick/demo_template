@@ -11,11 +11,14 @@ pytestmark = [allure.feature("Static secrets"), allure.story("Versions")]
 @pytest.mark.smoke
 @pytest.mark.tc("TC-API-005")
 def test_update_keeps_previous_version(flow):
+    # Arrange: admin creates a secret (version 1)
     flow.then(create_secret()).run()
     admin, secret = flow.ctx["admin"], flow.ctx["secret"]
 
+    # Act: update the value and keep the previous version (version 2)
     assert admin.update_secret_val(secret.name, "new-value", keep_prev_version=True).ok
 
+    # Assert: latest read gives the new value, version 1 still gives the old one
     latest = admin.get_secret_value([secret.name])
     first = admin.get_secret_value([secret.name], version=1)
     assert latest.json()[secret.name] == "new-value"

@@ -49,11 +49,14 @@ DECISION_TABLE = [
 @pytest.mark.smoke
 @pytest.mark.parametrize(("rules", "folder", "action", "allowed"), DECISION_TABLE)
 def test_role_rules_decide_access(flow, rules, folder, action, allowed):
+    # Arrange: admin creates the secret, then a new user with ONLY this row's rules
     flow.then(create_secret(folder=folder)).then(limited_identity(rules)).run()
     secret, identity = flow.ctx["secret"], flow.ctx["identity"]
 
+    # Act: that limited user tries the row's action
     response = ACTIONS[action](identity, secret)
 
+    # Assert: allowed or denied, as the table says; a denied response must not leak the value
     assert response.ok is allowed, f"{action} expected {'allowed' if allowed else 'denied'}: {response.status}"
     if not allowed:
         assert secret.value not in response.text(), "denied response must not leak the value"

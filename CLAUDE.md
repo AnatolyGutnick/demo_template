@@ -28,6 +28,7 @@ API + UI test automation: Python, pytest, Playwright (sync), Page Object Model, 
 - Assertions: `expect(...)` for UI (auto-retry), plain `assert` + pydantic model for API.
 - Every test: `@allure.feature`, `@allure.story`, a priority marker (`smoke`/`regression`) and `@pytest.mark.tc("ID")`
   matching `docs/03-test-cases.md`.
+- Test body: `# Arrange:`, `# Act:`, `# Assert:` comments, each saying in words what happens.
 - Tests are independent: own data via API, cleanup in `finally` / fixture teardown.
 - Prefer API for setup and verification; use UI only for what the test is about.
 - A known bug -> `@pytest.mark.xfail(reason="BUG-00X ...", strict=True)` + entry in `docs/04-bugs.md`.

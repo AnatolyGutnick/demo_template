@@ -11,11 +11,14 @@ pytestmark = [allure.feature("Static secrets"), allure.story("Delete")]
 @pytest.mark.smoke
 @pytest.mark.tc("TC-API-006")
 def test_deleted_secret_cannot_be_read(flow):
+    # Arrange: admin creates a secret
     flow.then(create_secret()).run()
     admin, secret = flow.ctx["admin"], flow.ctx["secret"]
 
+    # Act: delete it (all versions)
     assert admin.delete_item(secret.name).ok
 
+    # Assert: reading fails without leaking the value, and it is no longer listed
     response = admin.get_secret_value([secret.name])
     assert not response.ok
     assert secret.value not in response.text()
