@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+import secrets
 import uuid
 
 
 def unique_suffix() -> str:
     return uuid.uuid4().hex[:8]
+
+
+def secret_value() -> str:
+    """Random, never a real credential."""
+    return f"qa-{secrets.token_urlsafe(16)}"
 
 
 def example_user(**overrides) -> dict:

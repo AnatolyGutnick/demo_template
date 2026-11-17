@@ -15,6 +15,7 @@ system before it was kept.
 | 4 | Page objects       |                                  |                                    |           |                                                                                            |
 | 5 | Review             |                                  |                                    |           |                                                                                            |
 | 6 | Framework design | Chain-of-steps pattern (from my earlier design), shown as diagrams | Layer diagram + chain-run flowchart (Mermaid) | Diagrams | Asked to stop and plan before code; kept asserts in the test, not hidden in the flow |
+| 7 | Flow code + pipeline tests | Build the generic Flow and the Akeyless secret access pipeline | Flow (ExitStack), unit tests, API client, steps, 3 test groups | All, after review | Endpoint names checked in the API reference first; credentials masked in the public Allure report; each decision-table row gets its own TC ID; cases not fully covered marked "partly" |
 
 ## Where AI helped most
 

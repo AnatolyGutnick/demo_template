@@ -38,6 +38,8 @@ jobs:
       API_URL: ${{ vars.API_URL }}
       USER_NAME: ${{ secrets.USER_NAME }}
       USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
+      AKEYLESS_ACCESS_ID: ${{ secrets.AKEYLESS_ACCESS_ID }}
+      AKEYLESS_ACCESS_KEY: ${{ secrets.AKEYLESS_ACCESS_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

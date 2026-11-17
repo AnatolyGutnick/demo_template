@@ -19,13 +19,16 @@ The test design is in `docs/`, the code follows it:
 
 ```
 framework/
+  flow/         generic flow orchestrator: chain of steps + cleanup stack (no system code)
+  steps/        reusable steps per system (Akeyless secret access pipeline)
   pages/        Page Object Model (locators + actions, no assertions)
-  api/          API clients on Playwright APIRequestContext
+  api/          API clients on Playwright APIRequestContext (credentials masked in reports)
   models/       pydantic response contracts
   data/         test data factories
   config.py     settings from env vars
 tests/
-  api/          business rules, validation, contracts
+  unit/         the flow orchestrator itself - runs without any system
+  api/          test groups by pipeline stage: auth, items, access (`pytest -m access`)
   ui/           user-visible behaviour
   e2e/          arrange via API -> act in UI -> verify via API
 ```

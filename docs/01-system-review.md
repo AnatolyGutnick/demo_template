@@ -49,18 +49,20 @@ product fails at its core promise. It is also small enough to test properly in a
 
 ## Open questions / assumptions
 
-| #  | Question                                                             | Assumption made                                                                            | Impact if wrong                         |
-|----|----------------------------------------------------------------------|--------------------------------------------------------------------------------------------|-----------------------------------------|
-| 1  | HTTP status for each error (missing item, no permission, duplicate)? | Non-2xx + `{"error"}`; tests assert the shape and "not 200", status pinned after exploring | Weaker negative asserts until confirmed |
-| 2  | Creating a secret with an existing name - error or overwrite?        | Error, original value unchanged                                                            | TC-API-007 expected result flips        |
-| 3  | Name rules: allowed characters, max length, leading `/`?             | Path-like names allowed; limits unknown -> explore                                         | Boundary cases for TC-API-009           |
-| 4  | Max value size?                                                      | Unknown -> find by exploring, then boundary test                                           | TC-API-010 limits                       |
-| 5  | Account defaults for `keep-prev-version` and `max-versions`?         | Tests set `keep-prev-version` explicitly                                                   | Version tests flaky if left to defaults |
-| 6  | What happens on update beyond `max-versions`?                        | Oldest version is dropped                                                                  | TC-API-012                              |
-| 7  | Is a deleted static secret gone at once or soft-deleted?             | Gone for reads at once (`delete-in-days` is for keys)                                      | Cleanup and TC-API-006                  |
-| 8  | Does `list-items` / `describe-item` ever return the value?           | Never (only metadata)                                                                      | Security leak - would be a bug          |
-| 9  | Token TTL and refresh                                                | Long enough for a test run; one token per session                                          | Long runs may need re-auth              |
-| 10 | Test account: free tier limits (items, API rate)?                    | Enough for ~50 items per run                                                               | Need cleanup sweeper / throttling       |
+| #  | Question                                                               | Assumption made                                                                            | Impact if wrong                             |
+|----|------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------------------------------------------|
+| 1  | HTTP status for each error (missing item, no permission, duplicate)?   | Non-2xx + `{"error"}`; tests assert the shape and "not 200", status pinned after exploring | Weaker negative asserts until confirmed     |
+| 2  | Creating a secret with an existing name - error or overwrite?          | Error, original value unchanged                                                            | TC-API-007 expected result flips            |
+| 3  | Name rules: allowed characters, max length, leading `/`?               | Path-like names allowed; limits unknown -> explore                                         | Boundary cases for TC-API-009               |
+| 4  | Max value size?                                                        | Unknown -> find by exploring, then boundary test                                           | TC-API-010 limits                           |
+| 5  | Account defaults for `keep-prev-version` and `max-versions`?           | Tests set `keep-prev-version` explicitly                                                   | Version tests flaky if left to defaults     |
+| 6  | What happens on update beyond `max-versions`?                          | Oldest version is dropped                                                                  | TC-API-012                                  |
+| 7  | Is a deleted static secret gone at once or soft-deleted?               | Gone for reads at once (`delete-in-days` is for keys)                                      | Cleanup and TC-API-006                      |
+| 8  | Does `list-items` / `describe-item` ever return the value?             | Never (only metadata)                                                                      | Security leak - would be a bug              |
+| 9  | Token TTL and refresh                                                  | Long enough for a test run; one token per session                                          | Long runs may need re-auth                  |
+| 10 | Test account: free tier limits (items, API rate)?                      | Enough for ~50 items per run                                                               | Need cleanup sweeper / throttling           |
+| 11 | `get-secret-value` response shape (schema is "any properties")?        | `{"<secret name>": "<value>"}`                                                             | TC-API-003/005 read the value wrongly       |
+| 12 | Is an API-key auth method used with `/auth` `access-type: access_key`? | Yes (same access-id / access-key pair)                                                     | `limited_identity` step and TC-API-016..019 |
 
 ## Observations / suspicious behaviour
 

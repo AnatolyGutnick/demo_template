@@ -61,6 +61,32 @@ orchestrator is generic (no Akeyless code); only the steps, the API client and t
 know the system. Variations are data (`parametrize`), so one chain covers many combinations, and
 each test group (category marker) varies one thing.
 
+### The pipeline under test - secret access
+
+Every request to Akeyless goes through the same stages; each stage has its own variations:
+
+```
+identity (auth method) -> token -> role rules -> item (type, format, version) -> delivery channel
+```
+
+| Stage      | Variations                                                      | Test group (marker)                         | In this demo                 |
+|------------|-----------------------------------------------------------------|---------------------------------------------|------------------------------|
+| Identity   | access key, API key, JWT/OIDC, Kubernetes, AWS IAM, certificate | `auth` - `tests/api/test_auth.py`           | access key / API key         |
+| Role rules | read, list, update, delete, deny; folder, sibling, prefix       | `access` - `tests/api/test_access_rules.py` | decision table (8 rows)      |
+| Item       | text, multiline, JSON, unicode; versions                        | `items` - `tests/api/test_secret_items.py`  | 5 values + versions          |
+| Delivery   | REST, CLI, SDK, Gateway (cache), K8s injector, CI plugins       | -                                           | REST only (rest needs infra) |
+
+Each group varies **one** stage and keeps the others at the default (one-at-a-time). Varying everything against
+everything would be ~1,500 combinations; for a real project a small pairwise set would cover the interactions.
+
+Run one group: `pytest -m access`. In code, one pipeline row is:
+
+```python
+flow.then(create_secret(folder="app")).then(limited_identity([(["read"], "{root}/app/*")])).run()
+response = flow.ctx["identity"].get_secret_value([flow.ctx["secret"].name])  # act
+assert response.ok  # assert in the test
+```
+
 ### Layers
 
 ```mermaid
