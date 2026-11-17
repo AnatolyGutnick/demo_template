@@ -2,6 +2,11 @@
 
 Pipeline per row: admin creates the secret -> new identity with only the row's rules ->
 that identity tries one action. One test, many variations.
+
+Two kinds of variation:
+- the rules table (DECISION_TABLE) is test data for this test -> @pytest.mark.parametrize
+- the identity type is a setup variation shared by tests -> parametrized fixture `identity_type`
+  (tests/api/conftest.py). Every row runs once per identity type.
 """
 
 import allure
@@ -48,9 +53,9 @@ DECISION_TABLE = [
 @allure.story("Role rules decision table")
 @pytest.mark.smoke
 @pytest.mark.parametrize(("rules", "folder", "action", "allowed"), DECISION_TABLE)
-def test_role_rules_decide_access(flow, rules, folder, action, allowed):
-    # Arrange: admin creates the secret, then a new user with ONLY this row's rules
-    flow.then(create_secret(folder=folder)).then(limited_identity(rules)).run()
+def test_role_rules_decide_access(flow, identity_type, rules, folder, action, allowed):
+    # Arrange: admin creates the secret, then a new user of this identity type with ONLY this row's rules
+    flow.then(create_secret(folder=folder)).then(limited_identity(rules, identity_type)).run()
     secret, identity = flow.ctx["secret"], flow.ctx["identity"]
 
     # Act: that limited user tries the row's action

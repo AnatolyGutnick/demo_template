@@ -37,6 +37,9 @@ marked *(explore)* depend on an open question in [01-system-review.md](01-system
 
 ## Access rules - decision table (TC-API-016..019)
 
+Each row runs once per identity type (parametrized fixture `identity_type`: `api_key` now, `certificate`
+planned and skipped).
+
 Identity = limited access key bound to one test role. Secret = `/qa-autotest/<run>/...`.
 
 | # | Rule on the secret's path     | Other rule       | read | list | update | delete | Case |

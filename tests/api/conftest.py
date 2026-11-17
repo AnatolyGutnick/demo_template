@@ -36,6 +36,24 @@ def run_root() -> str:
     return f"{settings.test_root}/{time.strftime('%Y%m%d-%H%M%S')}-{unique_suffix()}"
 
 
+# Identity type = a SETUP variation, so it is a parametrized fixture, not a parametrize table:
+# every test that takes `identity_type` runs once per type, with no change to the test.
+IDENTITY_TYPE_PARAMS = [
+    pytest.param("api_key", id="api-key"),
+    pytest.param(
+        "certificate",
+        id="certificate",
+        marks=pytest.mark.skip(reason="planned: needs a generated client certificate - see 02-test-strategy"),
+    ),
+]
+
+
+@pytest.fixture(params=IDENTITY_TYPE_PARAMS)
+def identity_type(request: pytest.FixtureRequest) -> str:
+    """Current identity type - a key of IDENTITY_TYPES in framework/steps/akeyless_api.py."""
+    return request.param
+
+
 @pytest.fixture
 def flow(admin: AkeylessClient, run_root: str) -> Iterator[Flow]:
     with Flow(admin=admin, root=run_root) as f:

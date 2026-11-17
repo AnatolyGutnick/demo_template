@@ -133,6 +133,26 @@ Rules:
   even when a step or an assert fails.
 - API steps do setup and verification; a UI step is used only for what the test is about.
 
+### Variations - decision: parametrize vs parametrized fixture
+
+Two kinds of variation, two pytest tools:
+
+| Variation                                | Belongs to                | Tool                       | Example                                  |
+|------------------------------------------|---------------------------|----------------------------|------------------------------------------|
+| Inputs + expected result of **one** test | the test (test data)      | `@pytest.mark.parametrize` | role rules decision table, secret values |
+| **Setup** shared by many tests           | the fixture (environment) | fixture `params=[...]`     | identity type (`identity_type` fixture)  |
+
+**Decision:** identity type is a parametrized fixture (`tests/api/conftest.py`). Every test that takes
+`identity_type` runs once per type, with no change to the test; the access decision table runs 8 rows x N types.
+Adding a type = one builder in `IDENTITY_TYPES` (`framework/steps/akeyless_api.py`) + one fixture param.
+
+- `api_key` - implemented.
+- `certificate` - listed and skipped (planned: needs a generated client certificate). It shows where the next
+  type goes; JWT/OIDC, Kubernetes and cloud IAM need external infrastructure and stay out of the demo.
+
+Why not one big `parametrize` with identity type as a column: it would have to be repeated in every test, and the
+identity type is not what those tests are about - it is the environment they run in.
+
 ### Implementation - kept simple for this demo
 
 The orchestrator is a thin `Flow` class (~50 lines) on standard pieces, not a custom engine:
