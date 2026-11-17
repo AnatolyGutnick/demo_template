@@ -105,6 +105,23 @@ Rules:
   even when a step or an assert fails.
 - API steps do setup and verification; a UI step is used only for what the test is about.
 
+### Implementation - kept simple for this demo
+
+The orchestrator is a thin `Flow` class (~50 lines) on standard pieces, not a custom engine:
+
+- `contextlib.ExitStack` - cleanup stack, runs in reverse order, continues if one cleanup fails
+- `allure.step` - each step is a named step in the report
+- a pytest fixture - creates the flow and closes it in teardown
+- `pytest.mark.parametrize` - variations with readable `ids`
+
+**For a real project** I would consider:
+
+- **ScreenPy** (Screenplay pattern: actors, tasks, questions) - when many teams share steps
+- **pytest-cases** - richer combinations of fixtures and parameters
+- **pytest-bdd** - when product owners read or write the scenarios (Gherkin)
+- **tenacity** - polling for async processing (queues, background jobs)
+- Pairwise generation (e.g. `allpairspy`) - when variation tables grow too large to list by hand
+
 ## Test design techniques
 
 - **Decision table** - access rules: capability x path match x deny -> allowed / denied
