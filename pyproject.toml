@@ -1,0 +1,42 @@
+[project]
+name = "demo-template"
+version = "0.1.0"
+description = "API + UI test framework template: pytest, Playwright, Page Object Model, Allure"
+requires-python = ">=3.11"
+dependencies = [
+    "pytest>=8.3",
+    "pytest-playwright>=0.7",
+    "pytest-xdist>=3.6",
+    "pytest-rerunfailures>=15.0",
+    "allure-pytest>=2.13",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--alluredir=allure-results",
+    "--tracing=retain-on-failure",
+    "--screenshot=only-on-failure",
+]
+markers = [
+    "smoke: P1 - critical paths, run on every commit",
+    "regression: P2 - broader coverage",
+    "api: API-level test",
+    "ui: UI-level test",
+    "e2e: combined API + UI flow",
+    "tc(id): link to a test case ID in docs/03-test-cases.md",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "PT"]
